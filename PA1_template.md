@@ -1,14 +1,10 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
 ## Loading and preprocessing the data
 The below steps require that the ggplot2 library is installed and loaded.
 
-```{r setup, echo=TRUE}
+
+```r
 # Load the plotting package `ggplot2`
 # Try to install the package if it is not found.
 if(!suppressMessages(require(ggplot2))){
@@ -26,7 +22,6 @@ data <- read.csv(file = './activity.csv', stringsAsFactors = FALSE)
 
 # Change class for the date variable
 data$date <- as.Date(data$date)
-
 ```
 ### Examining the data
 The data for this assignment can be downloaded from the course web site:  
@@ -38,15 +33,41 @@ The variables included in this dataset are:
 * interval: Identifier for the 5-minute interval in which measurement was taken  
 The dataset is stored in a comma-separated-value (CSV) file and there are a total of 17,568 observations in this dataset.  
   
-```{r examine, echo=TRUE}
+
+```r
 summary(data)
+```
+
+```
+##      steps            date               interval   
+##  Min.   :  0.0   Min.   :2012-10-01   Min.   :   0  
+##  1st Qu.:  0.0   1st Qu.:2012-10-16   1st Qu.: 589  
+##  Median :  0.0   Median :2012-10-31   Median :1178  
+##  Mean   : 37.4   Mean   :2012-10-31   Mean   :1178  
+##  3rd Qu.: 12.0   3rd Qu.:2012-11-15   3rd Qu.:1766  
+##  Max.   :806.0   Max.   :2012-11-30   Max.   :2355  
+##  NA's   :2304
+```
+
+```r
 head(data)
+```
+
+```
+##   steps       date interval
+## 1    NA 2012-10-01        0
+## 2    NA 2012-10-01        5
+## 3    NA 2012-10-01       10
+## 4    NA 2012-10-01       15
+## 5    NA 2012-10-01       20
+## 6    NA 2012-10-01       25
 ```
 
 ## What is mean total number of steps taken per day?  
 1.  Make a histogram of the total number of steps taken each day  
 
-```{r steps, echo=TRUE}
+
+```r
 # Summarize the data by day
 activity <- aggregate(formula = steps~date, data = data,FUN = sum, na.rm=TRUE)
 
@@ -64,17 +85,29 @@ qplot(x=date, y=steps,
   labs(title='Figure 1: Number of steps taken daily\n',
        y='Total steps per day', x='Date')
 plot(histogram)
-
 ```
+
+![plot of chunk steps](figures/steps.png) 
 2.  Calculate and report the mean and median total number of steps taken per day  
 Mean: 
-```{r mean, echo=TRUE}
+
+```r
   mean_steps
+```
+
+```
+## [1] 10766
 ```
   
 Median:
-```{r median, echo=TRUE}
+
+```r
   median_steps
+```
+
+```
+##   50% 
+## 10765
 ```
   
 ## What is the average daily activity pattern?
@@ -85,7 +118,8 @@ Aggregate steps per interval, with mean across the days
 2.  Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?  
 
 **Figure 2** below shows the average number of steps taken during each interval, across the days (blue line)   
-```{r pattern, echo=TRUE}
+
+```r
 interval <- aggregate(formula=steps~interval, data=data, FUN=mean, na.rm=TRUE)
 # Get the data for the interval with the most average activity across the days
 max_steps <- interval[which(interval$steps==max(interval$steps)),]
@@ -110,6 +144,8 @@ qplot(x=interval, y=steps,
 steps_per_interval
 ```
 
+![plot of chunk pattern](figures/pattern.png) 
+
 ## Imputing missing values
 Note that there are a number of days/intervals where there are missing values (coded as NA). The presence of missing days may introduce bias into some calculations or summaries of the data.  
 
@@ -117,7 +153,8 @@ The provided data contains a total of 2304, from which 2304 are missing number o
   
 From the observations of total steps taken per day and average steps taken per interval, it seems that there is more variation between the number of steps taken day to day (Figure 1, above) than in the average of steps taken during each interval across the different days (Figure 2, above). Given this, the imputation strategy I will follow is to complete the missing cases using the average number of steps from the corresponding interval (rounded towards zero to avoid using fractional steps).  
 
-```{r imputing, echo=TRUE}
+
+```r
 # Count the number of NAs
 total_NAs <- sum(!complete.cases(data))
 step_NAs <- sum(is.na(data$steps))
@@ -155,15 +192,17 @@ median_imputed_steps <- quantile(x = daily_imputed_activity$steps, probs = 0.5)
 # Replace the data in the original histogram with the imputed data
 histogram %+% imputed_activity +
   labs(title='Figure 3: Number of steps taken each day,\nafter imputing missing values')
-
 ```
+
+![plot of chunk imputing](figures/imputing.png) 
 
 ## Are there differences in activity patterns between weekdays and weekends?
 1.  Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.  
 
 2.  Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.  
 
-```{r differences, echo=TRUE}
+
+```r
 # Label each date as weekday/weekend (1:5 are weekdays, 6:7 are weekends)
 imputed_activity$week_part <- factor(
   ifelse(as.integer(format(imputed_activity$date, format = '%u')) %in% c(1:5),
@@ -173,6 +212,8 @@ imputed_activity$week_part <- factor(
 steps_per_interval %+% imputed_activity + facet_grid(week_part~.) +
   labs(title='Figure 4: Average of steps taken each interval across the days, \n given the part of the week')
 ```
+
+![plot of chunk differences](figures/differences.png) 
 
 
 
