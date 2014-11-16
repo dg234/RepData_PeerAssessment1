@@ -65,7 +65,7 @@ head(data)
 
 ## What is mean total number of steps taken per day?  
 1.  Make a histogram of the total number of steps taken each day  
-
+  
 
 ```r
 # Summarize the data by day
@@ -88,7 +88,9 @@ plot(histogram)
 ```
 
 ![plot of chunk steps](figures/steps.png) 
+  
 2.  Calculate and report the mean and median total number of steps taken per day  
+  
 Mean: 
 
 ```r
@@ -152,6 +154,8 @@ Note that there are a number of days/intervals where there are missing values (c
 The provided data contains a total of 2304, from which 2304 are missing number of steps, and none are missing dates or interval labels (i.e. all missing values are listed explicitly). As described in the PA1 instructions, the absence of these values might have an impact on the activity estimations  
   
 From the observations of total steps taken per day and average steps taken per interval, it seems that there is more variation between the number of steps taken day to day (Figure 1, above) than in the average of steps taken during each interval across the different days (Figure 2, above). Given this, the imputation strategy I will follow is to complete the missing cases using the average number of steps from the corresponding interval (rounded towards zero to avoid using fractional steps).  
+
+From these observations, it seems that the impact of imputing missing values on the total number of daily steps is negligible, so probably the original estimates have little bias due to missing values. The histogram of total number of daily steps, with imputed missing values, is included in **Figure 3** below.  
 
 
 ```r
